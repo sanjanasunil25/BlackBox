@@ -94,7 +94,7 @@ export class ClaudeService {
     const fullPrompt = (systemPrompt || '') + '\n\n' + safePrompt;
 
     console.log(`OpenRouter: Sending request with key starting with: ${apiKey.substring(0, 10)}...`);
-    console.log(`OpenRouter: Using model: google/gemini-2.5-flash`);
+    console.log(`OpenRouter: Using model: google/gemma-3-27b-it:free`);
 
     let lastError: Error | null = null;
 
@@ -109,10 +109,10 @@ export class ClaudeService {
             'Content-Type': 'application/json' 
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
+            model: 'google/gemma-3-27b-it:free',
             messages: [{ role: 'user', content: fullPrompt }],
             response_format: { type: 'json_object' },
-            max_tokens: 1000,
+            max_tokens: 800,
             temperature: 0.2,
           }),
         });
