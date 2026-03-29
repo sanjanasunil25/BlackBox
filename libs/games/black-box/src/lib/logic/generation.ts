@@ -82,27 +82,46 @@ export function cleanAndParseResponse(rawText: string): BlackboxApiResponse {
 
   const jsonString = cleaned.slice(firstBrace, lastBrace + 1);
 
-  const parsed = JSON.parse(jsonString) as BlackboxApiResponse;
+  try {
+    const parsed = JSON.parse(jsonString) as BlackboxApiResponse;
 
-  if (!parsed.rounds || !Array.isArray(parsed.rounds)) {
-    throw new Error('Response missing rounds array');
-  }
-
-  if (parsed.rounds.length < 1) {
-    throw new Error('No rounds in response');
-  }
-
-  for (const round of parsed.rounds) {
-    if (
-      !round.concept ||
-      !Array.isArray(round.clues) ||
-      round.clues.length !== 6
-    ) {
-      throw new Error(
-        `Invalid round structure - need concept + 6 clues (got ${round.clues?.length})`
-      );
+    if (!parsed.rounds || !Array.isArray(parsed.rounds)) {
+      throw new Error('Response missing rounds array');
     }
-  }
 
-  return parsed;
+    if (parsed.rounds.length < 1) {
+      throw new Error('No rounds in response');
+    }
+
+    for (const round of parsed.rounds) {
+      if (
+        !round.concept ||
+        !Array.isArray(round.clues) ||
+        round.clues.length !== 6
+      ) {
+        throw new Error(
+          `Invalid round structure - need concept + 6 clues (got ${round.clues?.length})`
+        );
+      }
+    }
+
+    return parsed;
+  } catch (parseError: any) {
+    console.error('JSON Parse Error or Validation Failure:', parseError.message);
+    console.error('Cleaned text:', jsonString);
+    
+    // Check for obvious truncation
+    if (jsonString.length > 500 && !jsonString.endsWith('}')) {
+      throw new Error('Response was truncated (incomplete JSON). Please try again.');
+    }
+    
+    // If it's already one of our custom validation errors, just rethrow it
+    if (parseError.message.includes('missing rounds') || 
+        parseError.message.includes('No rounds') || 
+        parseError.message.includes('Invalid round structure')) {
+      throw parseError;
+    }
+
+    throw new Error(`Failed to parse AI response: ${parseError.message}`);
+  }
 }

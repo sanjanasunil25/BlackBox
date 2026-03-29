@@ -91,10 +91,11 @@ export class ClaudeService {
         ? prompt.substring(0, MAX_CHARS) + '\n[Truncated]'
         : prompt;
 
-    const fullPrompt = (systemPrompt || '') + '\n\n' + safePrompt;
+    const referer = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4200';
 
     console.log(`OpenRouter: Sending request with key starting with: ${apiKey.substring(0, 10)}...`);
     console.log(`OpenRouter: Using model: openrouter/free`);
+    console.log(`OpenRouter: Referer: ${referer}`);
 
     let lastError: Error | null = null;
 
@@ -104,15 +105,18 @@ export class ClaudeService {
           method: 'POST',
           headers: { 
             'Authorization': `Bearer ${apiKey}`,
-            'HTTP-Referer': 'http://localhost:4200',
+            'HTTP-Referer': referer,
             'X-Title': 'Black Box Game Engine',
             'Content-Type': 'application/json' 
           },
           body: JSON.stringify({
             model: 'openrouter/free',
-            messages: [{ role: 'user', content: fullPrompt }],
+            messages: [
+              { role: 'system', content: systemPrompt || 'You are a helpful assistant.' },
+              { role: 'user', content: safePrompt }
+            ],
             response_format: { type: 'json_object' },
-            max_tokens: 800,
+            max_tokens: 2000,
             temperature: 0.2,
           }),
         });
