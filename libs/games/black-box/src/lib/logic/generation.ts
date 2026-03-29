@@ -77,7 +77,7 @@ export function cleanAndParseResponse(rawText: string): BlackboxApiResponse {
 
   if (firstBrace === -1 || lastBrace === -1) {
     console.error('Raw response that failed:', rawText);
-    throw new Error('No valid JSON found in Gemini response');
+    throw new Error('No valid JSON found in OpenRouter response');
   }
 
   const jsonString = cleaned.slice(firstBrace, lastBrace + 1);
