@@ -94,7 +94,7 @@ export class ClaudeService {
     const fullPrompt = (systemPrompt || '') + '\n\n' + safePrompt;
 
     console.log(`OpenRouter: Sending request with key starting with: ${apiKey.substring(0, 10)}...`);
-    console.log(`OpenRouter: Using model: google/gemini-1.5-flash`);
+    console.log(`OpenRouter: Using model: google/gemini-2.5-flash`);
 
     let lastError: Error | null = null;
 
@@ -109,7 +109,7 @@ export class ClaudeService {
             'Content-Type': 'application/json' 
           },
           body: JSON.stringify({
-            model: 'google/gemini-1.5-flash',
+            model: 'google/gemini-2.5-flash',
             messages: [{ role: 'user', content: fullPrompt }],
             response_format: { type: 'json_object' },
             max_tokens: 1000,
