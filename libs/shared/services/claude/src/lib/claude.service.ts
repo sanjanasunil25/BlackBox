@@ -103,11 +103,11 @@ export class ClaudeService {
       try {
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${apiKey}`,
             'HTTP-Referer': referer,
             'X-Title': 'Black Box Game Engine',
-            'Content-Type': 'application/json' 
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: 'openrouter/free',
@@ -131,7 +131,7 @@ export class ClaudeService {
         const data = (await response.json()) as any;
         const rawText = data.choices?.[0]?.message?.content ?? '';
         console.log('OpenRouter: Response received');
-        
+
         return rawText;
       } catch (err: any) {
         lastError = err;
