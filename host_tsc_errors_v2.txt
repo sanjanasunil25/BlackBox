@@ -1,0 +1,1 @@
+﻿apps/game-engine-host/src/app/app.tsx(2,26): error TS6305: Output file 'C:/Users/Lenovo/Desktop/blackboxx/game-engine/libs/games/black-box/dist/index.d.ts' has not been built from source file 'C:/Users/Lenovo/Desktop/blackboxx/game-engine/libs/games/black-box/src/index.ts'.

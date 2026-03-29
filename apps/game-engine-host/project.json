@@ -1,0 +1,47 @@
+{
+  "name": "game-engine-host",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/game-engine-host/src",
+  "targets": {
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "game-engine-host:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "game-engine-host:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "game-engine-host:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "apps/game-engine-host/dist"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "production",
+      "options": {
+        "buildTarget": "game-engine-host:build"
+      }
+    }
+  }
+}
