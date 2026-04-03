@@ -32,7 +32,7 @@ export function BlackBox({ config, onScore, onGameComplete }: BlackBoxProps) {
 
   // Loading
   if (phase === 'loading') {
-    return <LoadingScreen message="Crafting Your Challenge..." />;
+    return <LoadingScreen />;
   }
 
   // Start

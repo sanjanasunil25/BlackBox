@@ -19,29 +19,10 @@ export function App() {
   };
 
   return (
-    <>
-      {G4_CONFIG.isDemo && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0,
-          zIndex: 9999,
-          background: 'rgba(245,158,11,0.15)',
-          borderBottom: '1px solid rgba(245,158,11,0.4)',
-          padding: '8px 16px',
-          textAlign: 'center',
-          color: '#f59e0b',
-          fontSize: '13px',
-          fontFamily: 'Inter, system-ui, sans-serif',
-          fontWeight: 600,
-        }}>
-          ⚠️ Preview Mode — Add VITE_OPENROUTER_API_KEY to .env and restart to enable live AI
-        </div>
-      )}
-      <BlackBox
-        config={G4_CONFIG}
-        onScore={handleScore}
-        onGameComplete={handleGameComplete}
-      />
-    </>
+    <BlackBox
+      config={G4_CONFIG}
+      onScore={handleScore}
+      onGameComplete={handleGameComplete}
+    />
   );
 }
