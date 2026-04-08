@@ -19,6 +19,8 @@ build/
 .opencode/
 .agents/
 **/.agents/
+AGENTS.md
+CLAUDE.md
 
 # OS files
 .DS_Store
