@@ -27,3 +27,10 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+*.txt
+*.pdf
+opencode.json
+status*.txt
+*_errors*.txt
+models.txt
+free.txt

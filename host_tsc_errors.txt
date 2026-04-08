@@ -1,2 +1,0 @@
-﻿apps/game-engine-host/src/app/app.tsx(2,26): error TS2307: Cannot find module '@game-engine/blackboxx' or its corresponding type declarations.
-apps/game-engine-host/src/app/app.tsx(3,48): error TS6305: Output file 'C:/Users/Lenovo/Desktop/blackboxx/game-engine/libs/shared/types/dist/index.d.ts' has not been built from source file 'C:/Users/Lenovo/Desktop/blackboxx/game-engine/libs/shared/types/src/index.ts'.
