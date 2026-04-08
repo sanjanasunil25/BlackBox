@@ -1,0 +1,193 @@
+# Phase Plan — Black Box Game (G4) v2
+
+> Clean rebuild from scratch with all lessons learned
+
+---
+
+## Overview
+
+| Phase | Focus | Time |
+|-------|-------|------|
+| 0 | NX scaffold + env setup | 30 min |
+| 1 | Types + Gemini service | 1 hour |
+| 2 | Generation logic (5 rounds) | 1 hour |
+| 3 | Game state hook | 2 hours |
+| 4 | UI components (indigo theme) | 3 hours |
+| 5 | Bug fixes + integration | 1 hour |
+| 6 | Polish + handoff | 1 hour |
+
+---
+
+## Phase 0 — Scaffold & Environment
+
+- [ ] Create NX workspace or clone team repo
+- [ ] Create `.env` in workspace root:
+  ```
+  VITE_GEMINI_API_KEY=AIzaSyBpaG8AF8jQ9GKnwIysXB0xgekW2clUiQ0
+  ```
+- [ ] Verify `.gitignore` includes `.env`
+- [ ] Check `app.tsx` has `isDemo: !apiKey` (false when key exists)
+- [ ] Run `npx nx serve game-engine-host --port 4200`
+- [ ] Verify no "Preview Mode" banner
+
+**Done when:** App loads, no preview mode banner, DevTools console shows no 401
+
+---
+
+## Phase 1 — Types + Gemini Service
+
+- [ ] Define all TypeScript types in `libs/shared/types`
+- [ ] Update `claude.service.ts` to use Gemini:
+  - URL: `gemini-1.5-pro:generateContent?key=${apiKey}`
+  - No Authorization header — key in URL only
+  - Response: `data.candidates[0].content.parts[0].text`
+- [ ] Build and verify: `npx nx build claude`
+
+**Done when:** `npx nx build claude` passes with no errors
+
+---
+
+## Phase 2 — Generation Logic (5 rounds)
+
+- [ ] Write `BLACK_BOX_SYSTEM_PROMPT` — forces JSON-only output
+- [ ] Write `buildBlackboxPrompt()` — truncates to 4000 chars
+- [ ] Write `cleanAndParseResponse()` — strips markdown, extracts JSON
+- [ ] Validate: 5 rounds, 6 clues each
+- [ ] Retry logic: 2 retries, 1s/2s backoff
+- [ ] Test manually: paste text, verify 5 rounds generated
+
+**Done when:** Pasting text generates exactly 5 rounds with 6 clues each
+
+---
+
+## Phase 3 — Game State Hook
+
+- [ ] `useBlackBoxGame` manages:
+  - `phase`: start → loading → round_active → round_result → game_complete
+  - `currentRoundIndex`: 0–4
+  - `currentClueIndex`: 1–6
+  - `potentialScore`: updates on next clue
+  - `hintAvailable`: true per round
+- [ ] `revealNextClue()`: increment index, update score
+- [ ] `submitGuess()`: validate, update round state
+- [ ] `nextRound()`: if index < 4 → next round, else → game_complete
+- [ ] `useHint()`: mark used, deduct 100
+- [ ] Save to sessionStorage on every state change
+
+**Done when:** Full game flow works with mock data in console
+
+---
+
+## Phase 4 — UI Components (Indigo Theme)
+
+Build in this order:
+
+### 4.1 Design tokens (apply to all components)
+```
+Background: #07070f
+Card: #0f0f1f
+Primary gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7)
+Success: #10b981
+Danger: #f43f5e
+Text: #ffffff / #94a3b8
+Border radius: 20px cards, 14px buttons, 999px pills
+```
+
+### 4.2 StartScreen
+- [ ] Giant 🔍 with indigo glow circle
+- [ ] "BLACK BOX" gradient text title
+- [ ] Dashed drop zone for PDF
+- [ ] OR divider
+- [ ] Paste textarea
+- [ ] Gradient Generate button
+
+### 4.3 LoadingScreen
+- [ ] Brain emoji + "Crafting Your Challenge..."
+- [ ] Animated 3 dots
+
+### 4.4 GameScreen (Active Round)
+- [ ] Top bar: Exit | Title | Round badge
+- [ ] 3px progress bar
+- [ ] Score (large gradient) + Clue counter pill
+- [ ] Clue card with indigo left border
+- [ ] Guess input (autofocus) + Submit button (**always enabled**)
+- [ ] Next Clue button (shows −pts) + Hint button (amber)
+
+### 4.5 ResultScreen
+- [ ] Correct: green glow circle ✅, "Correct!", concept reveal, 3 stat cards
+- [ ] Forfeit: red glow circle ❌, "Not this time!", clue review list
+- [ ] Next Round gradient button
+- [ ] Exit ghost button
+
+### 4.6 FinalSummary
+- [ ] 🎯 indigo glow circle
+- [ ] Total score (giant gradient number)
+- [ ] Round breakdown table (green scores, red zeros)
+- [ ] Play Again gradient button
+
+### 4.7 ExitModal
+- [ ] Semi-transparent overlay
+- [ ] "Exit Black Box?" card
+- [ ] Keep Playing + Exit buttons
+
+**Done when:** All screens look correct at 360px and 1440px width
+
+---
+
+## Phase 5 — Integration & Bug Fixes
+
+Critical checks:
+- [ ] Submit button works from clue 1 (not just clue 6)
+- [ ] Score updates immediately on Next Clue click
+- [ ] After round 5, Final Summary shows (not another round)
+- [ ] Total score sums all 5 rounds correctly
+- [ ] PDF upload extracts text and generates clues
+- [ ] `onScore` callback fires after each round
+- [ ] `onGameComplete` callback fires after round 5
+- [ ] No API key in console logs
+
+---
+
+## Phase 6 — Polish & Handoff
+
+- [ ] Delete all `console.log` debug statements (keep `console.error`)
+- [ ] Test full flow: upload PDF → 5 rounds → final summary
+- [ ] Test full flow: paste text → 5 rounds → final summary
+- [ ] Keyboard navigation works
+- [ ] Run `npx nx build game-engine-host` — build must succeed
+- [ ] Final build: `dist/` folder ready to send
+- [ ] Update README with Gemini key instructions
+
+---
+
+## Rebuild Commands (clean start)
+
+```powershell
+# Delete all dist folders
+Remove-Item -Recurse -Force ".\libs\shared\services\claude\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\libs\shared\services\resource\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\libs\shared\services\session\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\libs\shared\types\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\libs\shared\utils\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\libs\shared\ui\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\libs\games\black-box\dist" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ".\node_modules\@game-engine" -ErrorAction SilentlyContinue
+
+# Reset NX cache
+npx nx reset
+
+# Reinstall
+npm install
+
+# Rebuild in order
+npx nx build types
+npx nx build utils
+npx nx build session
+npx nx build resource
+npx nx build claude
+npx nx build ui
+npx nx build black-box
+
+# Serve
+npx nx serve game-engine-host --port 4200
+```

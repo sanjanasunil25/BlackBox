@@ -1,0 +1,12 @@
+{
+  "name": "@game-engine/black-box",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": { "import": "./src/index.ts" }
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}

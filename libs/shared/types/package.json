@@ -1,0 +1,11 @@
+{
+  "name": "@game-engine/types",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  }
+}
