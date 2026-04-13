@@ -30,21 +30,19 @@ CRITICAL OUTPUT RULES:
 - Start your response directly with { and end with }
 
 REQUIRED JSON FORMAT:
-{
-  "rounds": [
-    {
-      "concept": "the secret answer",
-      "clues": [
-        "Clue 1 - most vague",
-        "Clue 2",
-        "Clue 3",
-        "Clue 4",
-        "Clue 5",
-        "Clue 6 - most specific"
-      ]
-    }
-  ]
-}
+[
+  {
+    "concept": "the secret answer",
+    "clues": [
+      "Clue 1 - most vague",
+      "Clue 2",
+      "Clue 3",
+      "Clue 4",
+      "Clue 5",
+      "Clue 6 - most specific"
+    ]
+  }
+]
 
 Generate exactly 5 rounds. Each round must have exactly 6 clues.
 `.trim();
@@ -59,69 +57,30 @@ export function buildBlackboxPrompt(
       ? resourceText.substring(0, MAX_CHARS) + '\n[Content truncated]'
       : resourceText;
 
-  return `Resource content:\n${safe}\n\nGenerate 5 Black Box rounds from this resource.\nRespond with JSON only. Start with { and end with }.`;
+  return `Resource content:\n${safe}\n\nGenerate 5 Black Box rounds from this resource.\nReturn ONLY a valid complete JSON array. Do not truncate. Do not add any text before or after the JSON array.`;
 }
 
-export function cleanAndParseResponse(rawText: string): BlackboxApiResponse {
-  // Remove markdown fences
-  let cleaned = rawText
-    .replace(/```json\s*/gi, '')
-    .replace(/```\s*/gi, '');
-
-  // Remove markdown headers
-  cleaned = cleaned.replace(/^#+\s+.*$/gm, '');
-
-  // Extract JSON boundaries
-  const firstBrace = cleaned.indexOf('{');
-  const lastBrace = cleaned.lastIndexOf('}');
-
-  if (firstBrace === -1 || lastBrace === -1) {
-    console.error('Raw response that failed:', rawText);
-    throw new Error('No valid JSON found in OpenRouter response');
-  }
-
-  const jsonString = cleaned.slice(firstBrace, lastBrace + 1);
-
+export function cleanAndParseResponse(response: string): any[] {
   try {
-    const parsed = JSON.parse(jsonString) as BlackboxApiResponse;
+    // find the first [ and last ] to extract just the JSON array
+    const jsonStart = response.indexOf('[');
+    const jsonEnd = response.lastIndexOf(']') + 1;
+    if (jsonStart === -1 || jsonEnd === 0) {
+      throw new Error('No JSON array found in response');
+    }
+    const jsonString = response.slice(jsonStart, jsonEnd);
+    const parsed = JSON.parse(jsonString);
 
-    if (!parsed.rounds || !Array.isArray(parsed.rounds)) {
-      throw new Error('Response missing rounds array');
+    if (!Array.isArray(parsed)) {
+      throw new Error('Response is not a JSON array');
     }
 
-    if (parsed.rounds.length < 1) {
-      throw new Error('No rounds in response');
-    }
-
-    for (const round of parsed.rounds) {
-      if (
-        !round.concept ||
-        !Array.isArray(round.clues) ||
-        round.clues.length !== 6
-      ) {
-        throw new Error(
-          `Invalid round structure - need concept + 6 clues (got ${round.clues?.length})`
-        );
-      }
+    if (parsed.length < 1) {
+      throw new Error('No rounds found in response');
     }
 
     return parsed;
-  } catch (parseError: any) {
-    console.error('JSON Parse Error or Validation Failure:', parseError.message);
-    console.error('Cleaned text:', jsonString);
-    
-    // Check for obvious truncation
-    if (jsonString.length > 500 && !jsonString.endsWith('}')) {
-      throw new Error('Response was truncated (incomplete JSON). Please try again.');
-    }
-    
-    // If it's already one of our custom validation errors, just rethrow it
-    if (parseError.message.includes('missing rounds') || 
-        parseError.message.includes('No rounds') || 
-        parseError.message.includes('Invalid round structure')) {
-      throw parseError;
-    }
-
-    throw new Error(`Failed to parse AI response: ${parseError.message}`);
+  } catch (error: any) {
+    throw new Error('Failed to parse AI response: ' + error.message);
   }
 }

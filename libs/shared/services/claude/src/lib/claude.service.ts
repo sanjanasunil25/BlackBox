@@ -116,7 +116,7 @@ export class ClaudeService {
               { role: 'user', content: safePrompt }
             ],
             response_format: { type: 'json_object' },
-            max_tokens: 2000,
+            max_tokens: 4000,
             temperature: 0.2,
           }),
         });

@@ -232,12 +232,12 @@ export function useBlackBoxGame(
           BLACK_BOX_SYSTEM_PROMPT
         );
         const parsed = cleanAndParseResponse(rawText);
-
+        
         // Build BlackboxGameData from parsed response
         const gameId = generateId();
-        const rounds: BlackboxRound[] = parsed.rounds
+        const rounds: BlackboxRound[] = parsed
           .slice(0, 5)
-          .map((r, i) => ({
+          .map((r: any, i: number) => ({
             roundId: generateId(),
             roundNumber: i + 1,
             concept: r.concept,
