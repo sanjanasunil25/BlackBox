@@ -20,9 +20,13 @@
       "@game-engine/utils": ["libs/shared/utils/src/index.ts"],
       "@game-engine/session": ["libs/shared/services/session/src/index.ts"],
       "@game-engine/resource": ["libs/shared/services/resource/src/index.ts"],
-      "@game-engine/claude": ["libs/shared/services/claude/src/lib/claude.service.ts"],
+      "@game-engine/claude": [
+        "libs/shared/services/claude/src/lib/claude.service.ts"
+      ],
       "@game-engine/ui": ["libs/shared/ui/src/index.ts"],
-      "@game-engine/black-box": ["libs/games/black-box/src/index.ts"]
+      "@game-engine/black-box": ["libs/games/black-box/src/index.ts"],
+      "@game-engine/speed-sniper": ["libs/games/speed-sniper/src/index.ts"],
+      "@org/speed-sniper": ["libs/games/speed-sniper/src/index.ts"]
     }
   }
 }

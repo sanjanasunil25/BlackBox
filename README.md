@@ -2,9 +2,9 @@
 > Upload a resource. Crack the concept.
 
 ## What is BlackBox?
-BlackBox is an AI-powered learning tool that takes any PDF or text 
-content and automatically generates questions to help you understand 
-and retain key concepts.
+BlackBox is an AI-powered learning tool that takes any 
+PDF or text content and automatically generates questions 
+to help you understand and retain key concepts.
 
 ## Features
 - 📄 Upload PDF files or paste text content
@@ -21,7 +21,7 @@ and retain key concepts.
 ## Getting Started
 1. Clone the repo
 2. Run `npm install`
-3. Add your `VITE_OPENROUTER_API_KEY` to `.env`
+3. Add `VITE_OPENROUTER_API_KEY` to `.env`
 4. Run `npm run dev`
 
 ## Live Demo
