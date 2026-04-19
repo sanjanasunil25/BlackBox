@@ -61,7 +61,10 @@ function gameReducer(
 
     case 'GENERATION_SUCCESS': {
       const gameData = action.payload;
-      const currentRound = gameData.rounds[0];
+      const currentRound = gameData.rounds?.[0];
+      if (!currentRound) {
+        return { ...state, phase: 'error', errorMessage: 'No rounds found in generated content.' };
+      }
       return {
         ...state,
         phase: 'round_active',
@@ -175,6 +178,14 @@ function gameReducer(
       // Move to next round
       const nextIdx = currentIdx + 1;
       const nextRound = state.gameData.rounds[nextIdx];
+      if (!nextRound) {
+        const completedGameData: BlackboxGameData = {
+          ...state.gameData,
+          status: 'complete',
+          completedAt: new Date(),
+        };
+        return { ...state, phase: 'game_complete', gameData: completedGameData };
+      }
       const updatedGameData: BlackboxGameData = {
         ...state.gameData,
         currentRoundIndex: nextIdx,
@@ -341,8 +352,8 @@ export function useBlackBoxGame(
   const useHint = useCallback((): string | null => {
     if (!state.hintAvailable || !state.currentRound) return null;
     const concept = state.currentRound.concept;
-    const words = concept.split(' ');
-    const hint = words.map((w) => `${w[0].toUpperCase()}${'_'.repeat(w.length - 1)}`).join(' ');
+    const words = concept.split(' ').filter(w => w.length > 0);
+    const hint = words.map((w) => `${w[0].toUpperCase()}${'_'.repeat(Math.max(0, w.length - 1))}`).join(' ');
     dispatch({ type: 'USE_HINT' });
     return hint;
   }, [state.hintAvailable, state.currentRound]);

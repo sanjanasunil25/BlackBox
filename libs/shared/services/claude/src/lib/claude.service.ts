@@ -130,6 +130,9 @@ export class ClaudeService {
 
         const data = (await response.json()) as any;
         const rawText = data.choices?.[0]?.message?.content ?? '';
+        if (!rawText) {
+          throw new Error('Empty response from OpenRouter API');
+        }
         console.log('OpenRouter: Response received');
 
         return rawText;
